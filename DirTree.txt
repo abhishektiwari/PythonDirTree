@@ -1,0 +1,17 @@
+.
+|-- DirTree.txt
+|-- main.py
+|-- mypackage
+|   |-- __init__.py
+|   |-- mypackagemodule.py
+|   |-- mysubpackage1
+|   |   |-- __init__.py
+|   |   `-- mysubpackage1module.py
+|   `-- mysubpackage2
+|       |-- __init__.py
+|       `-- mysubpackage2module.py
+|-- setup.py
+`-- test
+    `-- test_mypackage.py
+
+4 directories, 10 files

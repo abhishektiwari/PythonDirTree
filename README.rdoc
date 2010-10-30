@@ -1,0 +1,102 @@
+== PythonDirTree
+
+PythonDirTree provides guideline on How to organize your project
+
+== Guidelines
+
+* Tests go in a directory called test at the root level of your package, and are named test_modulename.py
+
+	test/test_modulename.py
+
+* Add your module’s parent directory to your PYTHONPATH in order to run tests,
+	
+	export PYTHONPATH=$PYTHONPATH:/path/to/googlemaps/googlemaps
+
+* This will work also for sub-packages/modules
+
+		>>> import mypackage
+		>>> mypackage
+		<module 'mypackage' from 'mypackage/__init__.py'>
+		>>> import mypackage.mysubpackage1
+		>>> mypackage.mysubpackage1
+		<module 'mypackage.mysubpackage1' from 'mypackage/mysubpackage1/__init__.py'>
+		>>> import mypackage.mysubpackage2
+		>>> mypackage.mysubpackage2
+		<module 'mypackage.mysubpackage2' from 'mypackage/mysubpackage2/__init__.py'>
+
+
+* Run tests from outside the test directory
+
+	python test/test_modulename.py
+
+* In setup.py, when you say packages = ['mypackage'] you are promising that the Distutils will find a file mypackage/__init__.py
+
+* To use doctest put this in your main routine, like
+
+		if __name__ == "__main__":
+			import doctest
+			doctest.testmod()	
+
+* Even if you are only using doctests, you should still have a test/test_modulename.py that runs your doctests:
+
+
+		import unittest
+		import doctest
+
+		import mypackage
+
+		class Test(unittest.TestCase):
+			"""Unit tests for mypackage."""
+
+			def test_doctests(self):
+				"""Run mypackage doctests"""
+				doctest.testmod(mypackage)
+
+		if __name__ == "__main__":
+			unittest.main()
+	
+== Directory Tree
+
+		.
+		|-- DirTree.txt
+		|-- main.py       (from mypackage import mypackagemodule OR import mypackage)
+		|                 (from mypackage.mysubpackage1 import mysubpackage1module OR import mypackage.mysubpackage1)
+		|                 (from mypackage.mysubpackage2 import mysubpackage2module OR import mypackage.mysubpackage2)
+		|-- mypackage
+		|   |-- __init__.py
+		|   |-- mypackagemodule.py (from mysubpackage1 import mysubpackage1module)
+		|   |                      (from mysubpackage2 import mysubpackage2module)
+		|   |-- mysubpackage1
+		|   |   |-- __init__.py
+		|   |   `-- mysubpackage1module.py
+		|   `-- mysubpackage2
+		|       |-- __init__.py
+		|       `-- mysubpackage2module.py (from mysubpackage1 import mysubpackage1module)
+		|-- setup.py
+		`-- test
+			`-- test_mypackage.py (import mypackage)
+								  (from mypackage import mypackagemodule)
+
+
+For more information refer,
+
+* http://infinitemonkeycorps.net/docs/pph/
+* http://stackoverflow.com/questions/1096216/override-namespace-in-python
+* http://stackoverflow.com/questions/72852/how-to-do-relative-imports-in-python
+* http://stackoverflow.com/questions/279237/python-import-a-module-from-a-folder
+* http://stackoverflow.com/questions/193161/what-is-the-best-project-structure-for-a-python-application
+* http://jcalderone.livejournal.com/39794.html
+
+== Help & Documentation
+For more information about installing, running and configuring PythonDirTree
+including a list of known issues and troubleshooting information, 
+refer to: http://wiki.github.com/abhishektiwari/PythonDirTree/
+
+== Directory Hierarchy
+See the DirTree.txt file
+
+== Authors and copyright
+© 2010 Abhishek Tiwari (abhishek@abhishek-tiwari.com)
+
+The software included in this package is copyrighted freeware
+distributed under the terms and conditions as specified in file LICENSE.

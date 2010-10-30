@@ -57,7 +57,7 @@ PythonDirTree provides guideline on How to organize your project
 	
 == Directory Tree
 
-		.
+	Project Folder
 		|-- DirTree.txt
 		|-- main.py       (from mypackage import mypackagemodule OR import mypackage)
 		|                 (from mypackage.mysubpackage1 import mysubpackage1module OR import mypackage.mysubpackage1)
@@ -75,8 +75,15 @@ PythonDirTree provides guideline on How to organize your project
 		|-- setup.py
 		`-- test
 			`-- test_mypackage.py (import mypackage)
-								  (from mypackage import mypackagemodule)
+			                      (from mypackage import mypackagemodule)
+* In addition you can always add following folders
 
+     /scripts or /bin for that kind of command-line interface stuff
+     /lib for your C-language libraries
+     /doc for most documentation
+     /apidoc for the Epydoc-generated API docs.
+
+* Note don't put your source in a directory called src or lib. This makes it hard to run without installing.
 
 For more information refer,
 

@@ -4,25 +4,41 @@ PythonDirTree provides guideline on How to organize your project
 
 == Guidelines
 
+* Ways to import
+	
+	import mypackage
+	import mypackage as mp
+	from mypackage import mypackagemodule
+	from mypackage import mypackagemodule as mpm
+	from X import a, b, c
+	from X import *
+
+* Also,   X = __import__(‘X’) works like import X, with the difference that you
+	
+	 1) pass the module name as a string, and 
+	 2) explicitly assign it to a variable in your current namespace.
+
+
 * Tests go in a directory called test at the root level of your package, and are named test_modulename.py
 
 	test/test_modulename.py
 
-* Add your module’s parent directory to your PYTHONPATH in order to run tests,
+* Add your module’s parent directory to your PYTHONPATH in order to run tests or to access anywhere, (no forword slash and give full path)
 	
-	export PYTHONPATH=$PYTHONPATH:/path/to/googlemaps/googlemaps
+	export PYTHONPATH=$PYTHONPATH:/home/abhishek/GithubProjects/PythonDirTree
+
 
 * This will work also for sub-packages/modules
 
 		>>> import mypackage
 		>>> mypackage
-		<module 'mypackage' from 'mypackage/__init__.py'>
+		<module 'mypackage' from '/home/abhishek/GithubProjects/PythonDirTree/mypackage/__init__.py'>
 		>>> import mypackage.mysubpackage1
 		>>> mypackage.mysubpackage1
-		<module 'mypackage.mysubpackage1' from 'mypackage/mysubpackage1/__init__.py'>
+		<module 'mypackage.mysubpackage1' from '/home/abhishek/GithubProjects/PythonDirTree/mypackage/mysubpackage1/__init__.py'>
 		>>> import mypackage.mysubpackage2
 		>>> mypackage.mysubpackage2
-		<module 'mypackage.mysubpackage2' from 'mypackage/mysubpackage2/__init__.py'>
+		<module 'mypackage.mysubpackage2' from '/home/abhishek/GithubProjects/PythonDirTree/mypackage/mysubpackage2/__init__.py'>
 
 
 * Run tests from outside the test directory
@@ -54,28 +70,65 @@ PythonDirTree provides guideline on How to organize your project
 
 		if __name__ == "__main__":
 			unittest.main()
-	
+
+* Circular Imports (Adopted from http://effbot.org/zone/import-confusion.htm)
+
+		In Python, things like def, class, and import are statements too.
+
+		Modules are executed during import, and new functions and classes won’t appear in the module’s namespace until the def (or class) statement has been executed.
+
+		This has some interesting implications if you’re doing recursive imports.
+
+		Consider a module X which imports module Y and then defines a function called spam:
+
+		    # module X
+
+		    import Y
+
+		    def spam():
+			print "function in module x"
+		If you import X from your main program, Python will load the code for X and execute it. When Python reaches the import Y statement, it loads the code for Y, and starts executing it instead.
+
+		At this time, Python has installed module objects for both X and Y in sys.modules. But X doesn’t contain anything yet; the def spam statement hasn’t been executed.
+
+		Now, if Y imports X (a recursive import), it’ll get back a reference to an empty X module object. Any attempt to access the X.spam function on the module level will fail.
+
+		    # module Y
+
+		    from X import spam # doesn't work: spam isn't defined yet!
+		Note that you don’t have to use from-import to get into trouble:
+
+		    # module Y
+
+		    import X
+
+		    X.spam() # doesn't work either: spam isn't defined yet!
+		To fix this, either refactor your program to avoid circular imports (moving stuff to a separate module often helps), or move the imports to the end of the module (in this case, if you move import Y to the end of module X, everything will work just fine).
+
 == Directory Tree
 
-	Project Folder
+		.
 		|-- DirTree.txt
 		|-- main.py       (from mypackage import mypackagemodule OR import mypackage)
 		|                 (from mypackage.mysubpackage1 import mysubpackage1module OR import mypackage.mysubpackage1)
 		|                 (from mypackage.mysubpackage2 import mysubpackage2module OR import mypackage.mysubpackage2)
 		|-- mypackage
 		|   |-- __init__.py
-		|   |-- mypackagemodule.py (from mysubpackage1 import mysubpackage1module)
-		|   |                      (from mysubpackage2 import mysubpackage2module)
+		|   |-- mypackagemodule.py (from mypackage.mysubpackage1 import mysubpackage1module)
+		|   |                      (from mypackage.mysubpackage2 import mysubpackage2module)
 		|   |-- mysubpackage1
 		|   |   |-- __init__.py
 		|   |   `-- mysubpackage1module.py
+		|   |   
 		|   `-- mysubpackage2
 		|       |-- __init__.py
-		|       `-- mysubpackage2module.py (from mysubpackage1 import mysubpackage1module)
+		|       `-- mysubpackage2module.py (from mypackage.mysubpackage1 import mysubpackage1module)
+		|	(<module 'mypackage.mysubpackage1.mysubpackage1module' from '/home/abhishek/GithubProjects/PythonDirTree/mypackage/mysubpackage1/mysubpackage1module.py'>)
 		|-- setup.py
 		`-- test
-			`-- test_mypackage.py (import mypackage)
-			                      (from mypackage import mypackagemodule)
+			`-- test_mypackage.py (import mypackage OR from mypackage import mypackagemodule)
+
+
 * In addition you can always add following folders
 
      /scripts or /bin for that kind of command-line interface stuff
@@ -93,6 +146,8 @@ For more information refer,
 * http://stackoverflow.com/questions/279237/python-import-a-module-from-a-folder
 * http://stackoverflow.com/questions/193161/what-is-the-best-project-structure-for-a-python-application
 * http://jcalderone.livejournal.com/39794.html
+* http://www.stereoplex.com/blog/understanding-imports-and-pythonpath
+* http://effbot.org/zone/import-confusion.htm
 
 == Help & Documentation
 For more information about installing, running and configuring PythonDirTree
